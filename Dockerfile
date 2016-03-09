@@ -1,18 +1,23 @@
 ## Version: 0.1
-FROM alpine
+FROM centos
 MAINTAINER Anton Bugreev <anton@bugreev.ru>
 
-RUN apk --update upgrade && \
-    apk add wget ca-certificates && \
-    update-ca-certificates && \
-    rm -rf /var/cache/apk/*
+RUN yum update -y && \
+    yum upgrade -y && \
+    yum install wget -y && \
+    yum clean all
 
-RUN adduser -S -s /sbin/nologin mattermost
+RUN useradd -d /home/m/ -s /sbin/nologin -U m
 
-USER mattermost
-WORKDIR /home/mattermost/
+USER m
+WORKDIR /home/m/
 
 RUN wget https://github.com/mattermost/platform/releases/download/v2.0.0/mattermost.tar.gz && \
-    tar -xzf mattermost.tar.gz && \
-    rm -rf mattermost.tar.gz
+    tar -xzf mattermost.tar.gz -C . && \
+    rm -f mattermost.tar.gz
+
+COPY ./mattermost-config.json /home/m/mattermost/config/config.json
+
+WORKDIR /home/m/mattermost/bin/
+CMD ["./platform"]
 
