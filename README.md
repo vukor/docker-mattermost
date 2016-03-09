@@ -23,7 +23,7 @@ How it's work
 
 * Build image mattermost:
 
-    `` docker-compose build ``
+    `` cd docker-mattermost/ && docker-compose build ``
 
 * Create and start containers:
 
