@@ -31,6 +31,14 @@ How it's work
 
 * Go to http://your-docker-host:8065/
 
+* For clean all run:
+
+    `` cd docker-mattermost/ && docker-compose down ``
+    
+    `` docker volume rm mattermost-files-data ``
+    
+    `` docker volume rm mattermost-db-data ``
+
 
 Useful links
 ============
