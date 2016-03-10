@@ -40,6 +40,20 @@ How it's work
     `` docker volume rm mattermost-db-data ``
 
 
+How manage databases
+===========
+
+* For backup database db run:
+    
+    `` cd docker-mattermost/ && docker-compose run --rm postgres bash -c "PGPASSWORD=dbpassword pg_dump --host=postgres --user=dbuser db" |gzip > ./backup/mattermost-db.sql.gz ``
+
+    Your backups will be located in backup/ directory.
+
+* For restore database db run:
+    
+    `` cd docker-mattermost/ && docker-compose stop mattermost && docker-compose run --rm postgres bash -c "export PGPASSWORD=dbpassword && dropdb --host=postgres --user=dbuser db && createdb --host=postgres --user=dbuser db && zcat /backup/mattermost-db.sql.gz| psql --host=postgres --user=dbuser db" && docker-compose start mattermost ``
+
+
 Useful links
 ============
   - http://www.mattermost.org

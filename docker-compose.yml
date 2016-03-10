@@ -13,6 +13,7 @@ services:
     container_name: postgres
     volumes:
       - mattermost-db-data:/var/lib/postgresql/data/
+      - ./backup/:/backup/
     environment:
       - POSTGRES_DB=db
       - POSTGRES_USER=dbuser
