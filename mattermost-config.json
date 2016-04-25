@@ -48,7 +48,7 @@
     },
     "FileSettings": {
         "DriverName": "local",
-        "Directory": "./data/",
+        "Directory": "../data/",
         "EnablePublicLink": true,
         "PublicLinkSalt": "A705AklYF8MFDOfcwh3I488G8vtLlVip",
         "ThumbnailWidth": 120,
