@@ -2,7 +2,7 @@
 
 MATTERMOST_VERSION="2.2.0"
 
-if ./platform -version | grep ${MATTERMOST_VERSION}
+if ./platform -version 2>&1 | grep ${MATTERMOST_VERSION} >/dev/null
 then
   echo "test passed"
   exit 0
