@@ -1,6 +1,9 @@
-## Version: 0.2
+## Version: 0.3
 FROM centos
 MAINTAINER Anton Bugreev <anton@bugreev.ru>
+
+## Set version
+ENV MATTERMOST_VERSION 2.2.0
 
 ## Install deps
 RUN yum update -y && \
@@ -14,15 +17,18 @@ USER m
 WORKDIR /home/m/
 
 ## Install mattermost
-RUN wget https://github.com/mattermost/platform/releases/download/v2.0.0/mattermost.tar.gz && \
-    tar -xzf mattermost.tar.gz -C . && \
-    rm -f mattermost.tar.gz
+RUN wget https://releases.mattermost.com/${MATTERMOST_VERSION}/mattermost-team-${MATTERMOST_VERSION}-linux-amd64.tar.gz && \
+    tar -xzf mattermost-team-${MATTERMOST_VERSION}-linux-amd64.tar.gz -C . && \
+    rm -f mattermost-team-${MATTERMOST_VERSION}-linux-amd64.tar.gz
 
 ## Add config
 COPY ./mattermost-config.json /home/m/mattermost/config/config.json
 User root
 RUN chown m:m /home/m/mattermost/config/config.json && chmod 640 /home/m/mattermost/config/config.json
 User m
+
+## Test operations
+COPY test.sh /test.sh
 
 WORKDIR /home/m/mattermost/bin/
 CMD ["./platform"]
