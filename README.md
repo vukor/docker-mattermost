@@ -7,17 +7,17 @@ This is project source for build and use docker images with Mattermost and Postg
 How it's work
 ===========
 
+* Install docker and docker-compose on your system
+
 * Download project:
 
     `` git clone https://vukor@github.com/vukor/docker-mattermost.git ``
-
-* Install docker and docker-compose on your system
 
 * Go to project directory
 
 * Set db account in docker-compose.yml and mattermost-config.json:
 
-    `` ./manage.sh init ``
+    `` DBPASSWORD=dbpassword ./manage.sh init ``
 
 * Create two volume data for mattermost and postgres containers:
     
@@ -42,14 +42,14 @@ How manage databases
 ===========
 
 * For backup database db run:
-    
-    `` cd docker-mattermost/ && docker-compose run --rm postgres bash -c "PGPASSWORD=dbpassword pg_dump --host=postgres --user=dbuser db" |gzip > ./backup/mattermost-db.sql.gz ``
+
+    `` DBPASSWORD=dbpassword ./manage.sh backup ``
 
     Your backups will be located in backup/ directory.
 
 * For restore database db run:
     
-    `` cd docker-mattermost/ && docker-compose stop mattermost && docker-compose run --rm postgres bash -c "export PGPASSWORD=dbpassword && dropdb --host=postgres --user=dbuser db && createdb --host=postgres --user=dbuser db && zcat /backup/mattermost-db.sql.gz| psql --host=postgres --user=dbuser db" && docker-compose start mattermost ``
+    `` DBPASSWORD=dbpassword ./manage.sh restore ``
 
 
 Useful links
