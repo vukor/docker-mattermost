@@ -1,18 +1,94 @@
 #!/bin/bash
 
+function BackupDB()
+{
+  if [[ -d backup ]]
+  then
+    ## Backup database
+    docker-compose run --rm postgres bash -c \
+      'echo " -- Backup Mattermost database --" ; \
+      BACKUP_DATE=$(date +%Y-%m-%d) && \
+      cd /backup/ && \
+      PGPASSWORD=$POSTGRES_PASSWORD pg_dump --host=postgres --user=$POSTGRES_USER db |gzip > $BACKUP_DATE.mattermost-db.sql.gz && \
+      ln -sf $BACKUP_DATE.mattermost-db.sql.gz latest.mattermost-db.sql.gz && \
+      ls /backup/$BACKUP_DATE.mattermost-db.sql.gz ; \
+      echo " -- Backup Mattermost database successfully finished --"'
+  else
+    echo "Backup dir does not exist!"
+  fi
+}
+
+function BackupFiles()
+{
+  if [[ -d backup ]]
+  then
+    ## Backup files and delete old backups
+    docker-compose run --rm mattermost bash -c \
+      'echo " -- Backup Mattermost files --" ; \
+      BACKUP_DATE=$(date +%Y-%m-%d) && \
+      cd /home/m/mattermost/data/ && \
+      [ -d /backup ] && tar -czf /backup/$BACKUP_DATE.mattermost-data.tar.gz * && \
+      cd /backup && ln -sf $BACKUP_DATE.mattermost-data.tar.gz latest.mattermost-data.tar.gz && \
+      ls /backup/$BACKUP_DATE.mattermost-data.tar.gz ; \
+      echo "-- Backup Mattermost files successfully finished. --"'
+  else
+    echo "Backup dir does not exist!"
+  fi
+}
+
+function RestoreDB()
+{
+  if [[ -f backup/latest.mattermost-db.sql.gz ]]
+  then
+    ## Stop Mattermost for correctly restore database
+    docker-compose stop mattermost
+    
+    ## Restore database
+    docker-compose run --rm postgres bash -c \
+      'echo "-- Restore Mattermost database --" ; \
+      export PGPASSWORD=$POSTGRES_PASSWORD && \
+      dropdb --host=postgres --user=$POSTGRES_USER db && \
+      createdb --host=postgres --user=dbuser db && \
+      zcat /backup/latest.mattermost-db.sql.gz | psql --host=postgres --user=dbuser db >/dev/null; \
+      echo "-- Restore Mattermost database successfully finished. --"'
+
+    ## Start Mattermost
+    docker-compose start mattermost
+  else
+    echo "Latest Mattermost database backup does not exist!"
+  fi
+}
+
+function RestoreFiles()
+{
+  if [[ -f backup/latest.mattermost-data.tar.gz ]]
+  then
+    ## Restore mattermost files
+    docker-compose run --rm mattermost bash -c \
+      'echo "-- Restore Mattermost files --" ; \
+      cd /home/m/mattermost/data/ && \
+      tar -xzf /backup/latest.mattermost-data.tar.gz ; \
+      echo "-- Restore Mattermost files successfully finished. --"'
+  else
+    echo "latest Mattermost files backup does not exist!"
+  fi
+}
+
 case $1 in
 
-  build )
-    docker-compose build ;;
+  update )
+    docker-compose pull --ignore-pull-failures && ./manage.sh build && ./manage.sh up
+    ;;
 
-  create-volumes )
+  build )
+    docker-compose build --force-rm --pull
+    ;;
+
+  init )
+    [ -z $DBPASSWORD ] && echo "Run: DBPASSWORD=dbpassword ./manage.sh init" && exit 1
+    sed -i 's/dbpassword/$DBPASSWORD/' mattermost-config.json docker-compose.yml
     docker volume create --name mattermost-files-data
     docker volume create --name mattermost-db-data
-    ;;
-  
-  init )
-    [ -z $DBPASSWORD ] && echo "Run: DBPASSWORD=YOURPASSWORD ./manage.sh init" && exit 1
-    echo "sed -i 's/dbpassword/$DBPASSWORD/' mattermost-config.json docker-compose.yml"
     ;;
 	
   test )
@@ -31,14 +107,19 @@ case $1 in
     docker-compose up -d
     ;;
 
+  down )
+    docker-compose down
+    ;;
+
   backup )
-    [ -z $DBPASSWORD ] && echo "Run: DBPASSWORD=YOURPASSWORD ./manage.sh backup" && exit 1
-    docker-compose run --rm postgres bash -c "PGPASSWORD=$DBPASSWORD pg_dump --host=postgres --user=dbuser db" |gzip > ./backup/mattermost-db.sql.gz
+    BackupDB
+    echo ''
+    BackupFiles
     ;;
 
   restore )
-    [ -z $DBPASSWORD ] && echo "Run: DBPASSWORD=YOURPASSWORD ./manage.sh restore" && exit 1
-    docker-compose run --rm postgres bash -c "export PGPASSWORD=$DBPASSWORD && dropdb --host=postgres --user=dbuser db && createdb --host=postgres --user=dbuser db && zcat /backup/mattermost-db.sql.gz| psql --host=postgres --user=dbuser db"
+    RestoreDB
+    RestoreFiles
     ;;
 
   clean )
