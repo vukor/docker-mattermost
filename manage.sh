@@ -5,7 +5,7 @@ function BackupDB()
   if [[ -d backup ]]
   then
     ## Backup database
-    docker-compose run --rm postgres bash -c \
+    docker-compose run --user="root" --rm postgres bash -c \
       'echo " -- Backup Mattermost database --" ; \
       BACKUP_DATE=$(date +%Y-%m-%d) && \
       cd /backup/ && \
@@ -23,7 +23,7 @@ function BackupFiles()
   if [[ -d backup ]]
   then
     ## Backup files and delete old backups
-    docker-compose run --rm mattermost bash -c \
+    docker-compose run --user="root" --rm mattermost bash -c \
       'echo " -- Backup Mattermost files --" ; \
       BACKUP_DATE=$(date +%Y-%m-%d) && \
       cd /home/m/mattermost/data/ && \
@@ -44,7 +44,7 @@ function RestoreDB()
     docker-compose stop mattermost
     
     ## Restore database
-    docker-compose run --rm postgres bash -c \
+    docker-compose run --user="root" --rm postgres bash -c \
       'echo "-- Restore Mattermost database --" ; \
       export PGPASSWORD=$POSTGRES_PASSWORD && \
       dropdb --host=postgres --user=$POSTGRES_USER db && \
@@ -64,7 +64,7 @@ function RestoreFiles()
   if [[ -f backup/latest.mattermost-data.tar.gz ]]
   then
     ## Restore mattermost files
-    docker-compose run --rm mattermost bash -c \
+    docker-compose run --user="root" --rm mattermost bash -c \
       'echo "-- Restore Mattermost files --" ; \
       cd /home/m/mattermost/data/ && \
       tar -xzf /backup/latest.mattermost-data.tar.gz ; \
