@@ -29,6 +29,7 @@ services:
       - 8065:8065
     volumes:
       - mattermost-files-data:/home/m/mattermost/data/
+      - ./backup/:/backup/
     depends_on:
       - postgres
     restart: always
