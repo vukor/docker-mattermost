@@ -15,41 +15,41 @@ How it's work
 
 * Go to project directory
 
-* Set db account in docker-compose.yml and mattermost-config.json:
+* Set password to DBMS and init your project:
 
     `` DBPASSWORD=dbpassword ./manage.sh init ``
 
-* Create two volume data for mattermost and postgres containers:
-    
-    `` ./manage.sh create-volumes ``
-
 * Build image mattermost:
 
-    `` ./manage build ``
+    `` ./manage.sh build ``
 
 * Create and start containers:
 
-    `` ./manage up ``
+    `` ./manage.sh up ``
 
 * Go to http://your-docker-host:8065/
 
 * Clean all (BE CAREFULL - this is remove all your mattermost's data volumes and containers):
 
-    `` ./manage clean ``
+    `` ./manage.sh clean ``
+
+* Update images and run new containers:
+
+    `` ./manage.sh update ``
 
 
 How manage databases
 ===========
 
-* For backup database db run:
+* For backup Mattermost database and files run:
 
-    `` DBPASSWORD=dbpassword ./manage.sh backup ``
+    `` ./manage.sh backup ``
 
     Your backups will be located in backup/ directory.
 
-* For restore database db run:
+* For restore Mattermost database and files run:
     
-    `` DBPASSWORD=dbpassword ./manage.sh restore ``
+    `` ./manage.sh restore ``
 
 
 Useful links
