@@ -77,7 +77,7 @@ function RestoreFiles()
 case $1 in
 
   update )
-    docker-compose pull --ignore-pull-failures && ./manage.sh build && ./manage.sh up
+    docker-compose pull --ignore-pull-failures && ./manage.sh build && ./manage.sh down && ./manage.sh up
     ;;
 
   build )
