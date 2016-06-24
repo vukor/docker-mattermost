@@ -86,7 +86,7 @@ case $1 in
 
   init )
     [ -z $DBPASSWORD ] && echo "Run: DBPASSWORD=dbpassword ./manage.sh init" && exit 1
-    sed -i 's/dbpassword/$DBPASSWORD/' mattermost-config.json docker-compose.yml
+    sed -i "s/dbpassword/$DBPASSWORD/" mattermost-config.json docker-compose.yml
     docker volume create --name mattermost-files-data
     docker volume create --name mattermost-db-data
     ;;
