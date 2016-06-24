@@ -3,7 +3,7 @@ FROM centos
 MAINTAINER Anton Bugreev <anton@bugreev.ru>
 
 ## Set version
-ENV MATTERMOST_VERSION 2.2.0
+ENV MATTERMOST_VERSION 3.1.0
 
 ## Install deps
 RUN yum update -y && \

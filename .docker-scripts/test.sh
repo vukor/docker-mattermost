@@ -1,6 +1,6 @@
 #!/bin/sh
 
-MATTERMOST_VERSION="2.2.0"
+MATTERMOST_VERSION="3.1.0"
 
 if ./platform -version 2>&1 | grep ${MATTERMOST_VERSION} >/dev/null
 then
