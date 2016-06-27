@@ -94,6 +94,7 @@ case $1 in
 	
   test )
     docker-compose run --rm mattermost /test.sh
+    if [ $? != 0 ]; then exit 1; fi
     ;;
 
   stop )
