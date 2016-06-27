@@ -7,6 +7,7 @@ function BackupDB()
     ## Backup database
     docker-compose run --user="root" --rm postgres bash -c \
       'echo " -- Backup Mattermost database --" ; \
+      install /usr/share/zoneinfo/Asia/Tomsk /etc/localtime && \
       BACKUP_DATE=$(date +%Y-%m-%d) && \
       cd /backup/ && \
       PGPASSWORD=$POSTGRES_PASSWORD pg_dump --host=postgres --user=$POSTGRES_USER db |gzip > $BACKUP_DATE.mattermost-db.sql.gz && \

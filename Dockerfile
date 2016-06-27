@@ -1,15 +1,18 @@
-## Version: 0.3
+## Version: 0.4
 FROM centos
 MAINTAINER Anton Bugreev <anton@bugreev.ru>
 
 ## Set version
-ENV MATTERMOST_VERSION 3.1.0
+ENV MATTERMOST_VERSION 2.2.0
 
 ## Install deps
 RUN yum update -y && \
     yum upgrade -y && \
     yum install wget -y && \
     yum clean all
+
+## Set TZ
+RUN install /usr/share/zoneinfo/Asia/Tomsk /etc/localtime
 
 ## Create and work under non-privileged user
 RUN useradd -d /home/m/ -s /sbin/nologin -U m
