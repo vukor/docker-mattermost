@@ -6,10 +6,6 @@ volumes:
   mattermost-db-data:
     external: true
 
-networks:
-  mattermost_net:
-    driver: bridge
-
 services:
   postgres:
     image: postgres
@@ -18,8 +14,6 @@ services:
       - mattermost-db-data:/var/lib/postgresql/data/
       - ./backup/:/backup/
       - /etc/localtime:/etc/localtime:ro
-    networks:
-      - mattermost_net
     environment:
       - POSTGRES_DB=db
       - POSTGRES_USER=dbuser
@@ -35,8 +29,6 @@ services:
     volumes:
       - mattermost-files-data:/home/m/mattermost/data/
       - ./backup/:/backup/
-    networks:
-      - mattermost_net
     depends_on:
       - postgres
     restart: always
