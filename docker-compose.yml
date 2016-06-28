@@ -1,5 +1,10 @@
 version: "2"
 
+networks:
+  default:
+    external:
+      name: mattermost-net
+
 volumes:
   mattermost-files-data:
     external: true
@@ -7,7 +12,6 @@ volumes:
     external: true
 
 services:
-
   postgres:
     image: postgres
     container_name: postgres
@@ -20,11 +24,10 @@ services:
       - POSTGRES_USER=dbuser
       - POSTGRES_PASSWORD=dbpassword
     restart: always
-    
   mattermost:
     build:
       context: .
-    image: vukor/mattermost
+    image: vukor/mattermost:test
     container_name: mattermost
     ports:
       - 8065:8065

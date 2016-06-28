@@ -87,12 +87,13 @@ case $1 in
   init )
     [ -z $DBPASSWORD ] && echo "Run: DBPASSWORD=dbpassword ./manage.sh init" && exit 1
     sed -i "s/dbpassword/$DBPASSWORD/" mattermost-config.json docker-compose.yml
+    docker network create mattermost-net
     docker volume create --name mattermost-files-data
     docker volume create --name mattermost-db-data
     ;;
 	
   test )
-    docker-compose run --rm mattermost /test.sh
+    docker run --net=mattermost-net --rm vukor/mattermost:test /test.sh
     if [ $? != 0 ]; then exit 1; fi
     ;;
 
@@ -127,6 +128,7 @@ case $1 in
     docker-compose down
     docker volume rm mattermost-files-data
     docker volume rm mattermost-db-data
+    docker network rm mattermost-net
     ;;
 
   * ) echo "Use: build|create-volumes|init|test|stop|start|up|backup|restore|clean" && exit 1 ;;
