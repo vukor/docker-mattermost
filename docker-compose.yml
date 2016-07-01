@@ -27,7 +27,7 @@ services:
   mattermost:
     build:
       context: .
-    image: vukor/mattermost:test
+    image: vukor/mattermost
     container_name: mattermost
     ports:
       - 8065:8065
