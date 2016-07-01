@@ -32,7 +32,7 @@ RUN chown m:m /home/m/mattermost/config/config.json && chmod 640 /home/m/matterm
 User m
 
 ## Test operations
-COPY .docker-scripts/test.sh /
+COPY tests /tests
 
 WORKDIR /home/m/mattermost/bin/
 CMD ["./platform"]

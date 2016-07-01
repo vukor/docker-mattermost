@@ -93,7 +93,7 @@ case $1 in
     ;;
 	
   test )
-    docker run --net=mattermost-net --rm vukor/mattermost /test.sh
+    docker run --net=mattermost-net --rm vukor/mattermost:test /tests/test-version.sh
     if [ $? != 0 ]; then exit 1; fi
     ;;
 
